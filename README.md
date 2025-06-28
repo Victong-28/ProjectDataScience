@@ -42,7 +42,45 @@ The NTSB data's depth in accident outcomes and aircraft specifics makes it highl
 * **Historical Nature:** While providing trends, historical data may not perfectly predict future risk given advancements in aircraft technology and safety regulations.
 * **Missing Data:** Various columns contain missing values, which were systematically handled through imputation (mean for numerical, mode for categorical) and filtering to ensure robust analysis.
 
-### 2.3 Key Analysis & Visualizations
+### 2.3 Data Preparation
+
+The raw dataset underwent several crucial preparation steps to ensure data quality and suitability for analysis:
+
+* **Date Formatting:**
+    The `event.date` column was converted to a datetime format, and a new `accident.year` column was extracted to facilitate time-series analysis.
+    ```python
+    df['event.date'] = pd.to_datetime(df['event.date'], errors='coerce')
+    df['accident.year'] = df['event.date'].dt.year
+    ```
+
+* **Cleaning Categorical Values:**
+    Common unknown placeholders such as `'UNK'`, `'Unk'`, and string `'Nan'` were standardized and replaced with the mode (most frequent value) for relevant categorical columns (e.g., `weather.condition`, `purpose.of.flight`).
+    ```python
+    # Example for one column
+    mode_value = df['weather.condition'].mode()[0]
+    df['weather.condition'] = df['weather.condition'].replace(['UNK', 'Unk', 'Nan'], mode_value)
+    ```
+
+* **Handling Missing Values (NaN):**
+    * **Numerical columns** (e.g., `total.fatal.injuries`, `total.serious.injuries`): These were first converted to a numeric type, coercing errors, and then missing values were filled with the mean of each respective column to preserve data distribution.
+        ```python
+        # Example for a numerical column
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+        df[col].fillna(df[col].mean(), inplace=True)
+        ```
+    * **Categorical columns** (e.g., `weather.condition`, `injury.severity`): Missing values were filled with the mode (most frequent value) to maintain the most common category.
+        ```python
+        # Example for a categorical column
+        df[col].fillna(df[col].mode()[0], inplace=True)
+        ```
+
+* **Standardizing Column Names:**
+    All column names were converted to lowercase and periods (`.`) replaced with underscores (`_`) for consistency and easier programmatic access.
+    ```python
+    df.columns = df.columns.str.replace('.', '_', regex=False).str.lower()
+    ```
+
+### 2.4 Key Analysis & Visualizations
 
 Our analysis involved comprehensive data cleaning, feature engineering (e.g., `is_fatal_accident`, `damage_score`), and rigorous aggregation to quantify risk. We specifically filtered for `Airplane` category and `Purpose_of_Flight` relevant to commercial and private operations (e.g., Personal, Business, Instructional, Ferry, Flight Test, Executive/Corporate).
 
@@ -52,7 +90,7 @@ Below are three key visualizations that drive our recommendations:
 
 #### **Figure 1: Top 10 Lowest Fatal Accident Rate by Aircraft Make**
 
-This chart highlights manufacturers with the best safety records in terms of fatal accident occurrences, considering only makes with substantial accident history to ensure statistical reliability. This directly informs which manufacturers to prioritize for procurement.
+This chart highlights aircraft manufacturers with the best safety records in terms of fatal accident occurrences. By analyzing makes with a substantial number of accidents, we ensure statistical reliability in identifying those that consistently demonstrate lower risk. This visualization directly informs which manufacturers to prioritize for procurement, aligning with our goal of a safety-first fleet.
 
 ![Top 10 Lowest Fatal Accident Rate by Aircraft Make](images/fatal_accident_rate_by_make.png)
 
@@ -60,19 +98,23 @@ This chart highlights manufacturers with the best safety records in terms of fat
 
 #### **Figure 2: Trend of Fatal Accident Rate Over Time**
 
-This visualization illustrates the long-term trend of fatal accident rates for airplanes in commercial and private operations. It provides an essential historical context, revealing whether overall aviation safety has improved, declined, or remained stable over the decades.
+This visualization illustrates the long-term trend of fatal accident rates specifically for airplanes involved in commercial and private operations. It provides an essential historical context, revealing whether overall aviation safety has improved, declined, or remained stable over the decades. A decreasing trend would indicate a generally safer environment for our new venture, contingent on adhering to best practices.
 
-![Trend of Fatal Accident Rate Over Time](images/fatal_accident_rate_trend.png)
+![Trend of Fatal Accident Rate Over Time]
 
----
+---![Safest VS Most Fatal Locations](https://github.com/user-attachments/assets/71eff3fb-454a-43ca-bd1b-2b56c5c3ded5)
+
+![Weather Vs Trends over the years](https://github.com/user-attachments/assets/ff5e4cf1-1c7c-467c-abea-39163592f7ed)
 
 #### **Figure 3: Fatal Accident Rate by Phase of Flight**
 
-Understanding *when* accidents are most likely to occur is crucial for operational safety. This chart identifies the phases of flight with the highest fatal accident rates, offering insights that can inform targeted training and procedural enhancements.
+Understanding *when* accidents are most likely to occur is crucial for developing robust operational safety measures. This chart identifies the phases of flight (e.g., takeoff, landing, maneuvering) that statistically have the highest fatal accident rates. The insights derived from this visualization are invaluable for informing targeted pilot training, pre-flight planning, and in-flight procedures to mitigate risks during critical operational periods.
 
-![Fatal Accident Rate by Phase of Flight](images/fatal_accident_rate_by_phase.png)
+![Fatal Accident Rate by Phase of Flight]
+![make vs injuries](https://github.com/user-attachments/assets/1d66a870-7bed-4db9-a9fa-9bc2ac8b474a)
 
----
+---![weather condition per Flight Purpose](https://github.com/user-attachments/assets/14530917-d499-4680-9625-10fd53dd084f)
+
 
 ## Conclusion
 
@@ -85,4 +127,14 @@ Our comprehensive aviation risk analysis provides critical, data-driven insights
 3.  **High-Risk Operational Phases:** We've identified specific phases of flight, notably **Takeoff, Landing, and Maneuvering**, as having significantly higher fatal accident rates. This finding is critical for stakeholders, implying that operational strategies, pilot training, and pre-flight planning should place heightened emphasis on these phases to minimize incident risk.
 
 These findings empower the aviation division to make strategic, data-informed decisions, fostering a safety-first approach from the foundation of our new fleet.
+
+## Technologies Used
+
+* **Python** (Programming Language)
+* **Pandas** (Data Manipulation and Analysis)
+* **NumPy** (Numerical Operations)
+* **Matplotlib** (Data Visualization)
+* **Jupyter Notebook** (Interactive Development Environment)
+* **Git & GitHub** (Version Control and Repository Hosting)
+* **Tableau** (Business Intelligence & Dashboarding - for further interactive exploration of `Cleaned_AviationData_Final.csv`)
 
