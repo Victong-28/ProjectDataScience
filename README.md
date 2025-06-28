@@ -92,9 +92,10 @@ Below are three key visualizations that drive our recommendations:
 
 This chart highlights aircraft manufacturers with the best safety records in terms of fatal accident occurrences. By analyzing makes with a substantial number of accidents, we ensure statistical reliability in identifying those that consistently demonstrate lower risk. This visualization directly informs which manufacturers to prioritize for procurement, aligning with our goal of a safety-first fleet.
 
-![Top 10 Lowest Fatal Accident Rate by Aircraft Make](images/fatal_accident_rate_by_make.png)
+![Top 10 Lowest Fatal Accident Rate by Aircraft Make]
 
 ---
+![make vs injuries](https://github.com/user-attachments/assets/fd48fff0-0ece-451d-ab53-6bcaeb62d279)
 
 #### **Figure 2: Trend of Fatal Accident Rate Over Time**
 
